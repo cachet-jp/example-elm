@@ -17,23 +17,21 @@
       prod = {};
     }
     .${env};
-  # TODO: After the first apply, uncomment the following and specify the Cloud Storage bucket.
-  # bucket =
-  #   {
-  #     dev = "xxxxxxxxxxxxxxxx-bucket-tfstate";
-  #     prod = {};
-  #   }
-  #   .${env};
+  bucket =
+    {
+      dev = "6ca33ced3f692324-bucket-tfstate";
+      prod = {};
+    }
+    .${env};
 in {
   terraform.required_providers = {
     google.source = "hashicorp/google";
   };
 
-  # TODO: After the first apply, uncomment the following to enable the backend using a Cloud Storage bucket.
-  # terraform.backend.gcs = {
-  #   inherit bucket;
-  #   prefix = "terraform/state";
-  # };
+  terraform.backend.gcs = {
+    inherit bucket;
+    prefix = "terraform/state";
+  };
 
   provider.google-beta = {
     inherit project;
