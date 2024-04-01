@@ -40,6 +40,20 @@
             }
           ];
         };
+        packages.docker = with pkgs;
+          dockerTools.buildLayeredImage {
+            name = "exampleelm";
+            tag = "latest";
+            config = {
+              Env = [
+                # https://gist.github.com/CMCDragonkai/1ae4f4b5edeb021ca7bb1d271caca999
+                "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
+              ];
+              Cmd = [
+                "${self.packages.${system}.default}/bin/example-elm"
+              ];
+            };
+          };
         pre-commit = {
           check.enable = true;
 
