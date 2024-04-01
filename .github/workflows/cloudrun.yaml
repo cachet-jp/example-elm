@@ -1,0 +1,67 @@
+on:
+  push:
+
+  workflow_dispatch:
+
+name: Build and Deploy to Cloud Run
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - id: setup-from-branch
+        run: |-
+          if [ '${{ github.ref_name }}' = 'main' ]; then
+            echo environment=prod >> $GITHUB_OUTPUT
+          else
+            echo environment=dev >> $GITHUB_OUTPUT
+          fi
+    outputs:
+      environment: ${{ steps.setup-from-branch.outputs.environment }}
+
+  deploy:
+    needs: setup
+    runs-on: ubuntu-latest
+
+    environment: ${{ needs.setup.outputs.environment }}
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: github-actions@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: '>= 420.0.0'
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+      - uses: cachix/install-nix-action@v22
+      - name: Docker Build
+        run: |-
+          nix build .#docker
+          docker load -i result
+
+      - name: Docker Push
+        run: |-
+          docker tag ${{ vars.DOCKER_IMAGE_NAME }}:latest asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/container/${{ vars.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+          docker push asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/container/${{ vars.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy cloudrun-service \
+            --region="asia-northeast1" \
+            --project=${{ vars.GCP_PROJECT_ID }} \
+            --image=asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/container/${{ vars.DOCKER_IMAGE_NAME }}:${{ github.sha }}
