@@ -45,17 +45,17 @@ This command not only builds the project but also starts the production server. 
 
 Follow these steps to set up the environment and deploy the application:
 
-1. Generate the Docker image by running: ```shell nix build .#docker ```
-1. Load the generated Docker image: ```shell docker load -i result ```
-1. Tag the Docker image, replacing $LOCATION and $PROJECT_ID with the appropriate values: ```shell docker tag exampleelm:latest $LOCATION-docker.pkg.dev/$PROJECT_ID/container/exampleelm:latest ```
-1. Push the Docker image: ```shell docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/container/exampleelm:latest ```
-1. Change the current directory to the terranix/ directory: ```shell cd terranix/ ```
-1. Enter the development shell using: ```shell nix develop ```
+1. Generate the Docker image by running: ```nix build .#docker ```
+1. Load the generated Docker image: ```docker load -i result ```
+1. Tag the Docker image, replacing $LOCATION and $PROJECT_ID with the appropriate values: ```docker tag exampleelm:latest $LOCATION-docker.pkg.dev/$PROJECT_ID/container/exampleelm:latest ```
+1. Push the Docker image: ```docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/container/exampleelm:latest ```
+1. Change the current directory to the terranix/ directory: ```cd terranix/ ```
+1. Enter the development shell using: ```nix develop ```
 1. Modify the terranix/config.nix file to match your environment and configure the backend for OpenTofu before running the apply command.
 1. Update the env argument passed to terraformConfiguration in the terranix/flake.nix file to match the desired environment (dev or prod) based on your updated terranix/config.nix configuration.
-1. Log in to Google Cloud SDK and set up the application default credentials for OpenTofu: ```shell gcloud auth application-default login ```
+1. Log in to Google Cloud SDK and set up the application default credentials for OpenTofu: ```gcloud auth application-default login ```
 1. Update the image field in the google_cloud_run_v2_service.default resource within the terranix/config.nix file to reference the Docker image URL pushed in step 4.
-1. Build the Google Cloud environment using OpenTofu by running: ```shell nix run .#terraform-dev apply ```
+1. Build the Google Cloud environment using OpenTofu by running: ```nix run .#terraform-dev apply ```
 
 ## Updating elm-srcs.nix
 
