@@ -99,6 +99,12 @@
             ${pkgs.elm2nix}/bin/elm2nix snapshot
           '');
         };
+        checks = {
+          integrationTest = pkgs.nixosTest (import ./tests {
+            inherit pkgs;
+            package = self.packages.${system}.default;
+          });
+        };
       };
     };
 }

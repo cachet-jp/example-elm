@@ -49,6 +49,14 @@ jobs:
         run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
       - uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: |
+            system-features = nixos-test kvm
+
+      - name: Check with Nix Flakes
+        run: |-
+          nix flake check
+
       - name: Docker Build
         run: |-
           nix build .#docker
