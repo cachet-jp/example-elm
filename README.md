@@ -5,6 +5,7 @@ This project is an example demonstrating how to set up an Elm project using Nix,
 ## Prerequisites
 
 - Nix package manager installed on your system
+- direnv installed on your system
 
 ## Getting Started
 
@@ -15,7 +16,15 @@ This project is an example demonstrating how to set up an Elm project using Nix,
    cd elm-example
    ```
 
-2. Enter the development environment:
+2. Allow direnv to load environment variables:
+
+   ```shell
+   direnv allow && direnv allow ./terranix
+   ```
+
+This command allows direnv to load the environment variables defined in the .envrc files located in the project root directory and the terranix directory. By running this command, you can automatically enter the development environment when navigating to these directories, eliminating the need to manually run nix develop each time.
+
+3. Enter the development environment:
 
    ```shell
    nix develop
@@ -23,7 +32,7 @@ This project is an example demonstrating how to set up an Elm project using Nix,
 
    This will set up the necessary dependencies, including Elm, elm-test, elm-format, and elm-language-server.
 
-3. Start the development server:
+4. Start the development server:
 
    ```shell
    nix run .#dev
