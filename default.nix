@@ -16,13 +16,16 @@
     inherit
       (nixpkgs)
       stdenv
+      nodejs_21
+      esbuild
+      caddy
       ;
-    npm = nixpkgs.nodePackages.npm;
-    elm = nixpkgs.elmPackages.elm;
-    nodejs = nixpkgs.nodejs_21;
-    esbuild = nixpkgs.esbuild;
-    caddy = nixpkgs.caddy;
-    fetchElmDeps = nixpkgs.elmPackages.fetchElmDeps;
+    inherit (nixpkgs.nodePackages) npm;
+    inherit
+      (nixpkgs.elmPackages)
+      elm
+      fetchElmDeps
+      ;
   };
 
   mkDerivation = {
