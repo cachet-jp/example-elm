@@ -14,6 +14,11 @@
     version = "1.0.0";
   };
 
+  "mdgriffith/elm-ui" = {
+    sha256 = "0ffcqv4a4ad400hwp824m3qq4jy82cqp5ghmhp1m0q7n004z6kgv";
+    version = "1.1.8";
+  };
+
   "elm/json" = {
     sha256 = "0kjwrz195z84kwywaxhhlnpl3p251qlbm5iz6byd6jky2crmyqyh";
     version = "1.1.3";
